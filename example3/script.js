@@ -3,7 +3,6 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124.0/build/three.m
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.124.0/examples/jsm/controls/OrbitControls.js'
 import { Rhino3dmLoader } from 'https://cdn.jsdelivr.net/npm/three@0.124.0/examples/jsm/loaders/3DMLoader.js'
 
-
 let camera, scene, raycaster, renderer
 const mouse = new THREE.Vector2()
 window.addEventListener( 'click', onClick, false);
@@ -21,9 +20,11 @@ function init() {
 
     // create a scene and a camera
     scene = new THREE.Scene()
-    scene.background = new THREE.Color(1,1,1)
+    scene.background = new THREE.Color(0,0,0)
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
-    camera.position.y = - 150
+    camera.position.z = - 150
+
+    const domEvents =
 
     // create the renderer and add it to the html
     renderer = new THREE.WebGLRenderer( { antialias: true } )
@@ -39,7 +40,7 @@ function init() {
     scene.add( directionalLight )
 
     raycaster = new THREE.Raycaster()
-
+     
     const material = new THREE.MeshNormalMaterial()
 
     const loader = new Rhino3dmLoader()
@@ -59,6 +60,14 @@ function init() {
         }, false)
 
         //////////////////////////////////////////////
+
+        const animateGeometry = () => {
+            requestAnimationFrame (animateGeometry)
+            object.rotation.x += 0.01;
+            object.rotation.y += 0.01;
+            renderer.render( scene, camera )
+        }
+        animateGeometry()
 
         scene.add( object )
 
@@ -137,11 +146,7 @@ function onClick( event ) {
 
 function animate() {
 
-    requestAnimationFrame( animate )
-   
-    object.rotation.x += 0.01;
-	object.rotation.y += 0.01;
-   
+    requestAnimationFrame( animate ) 
     renderer.render( scene, camera )
 
 }
