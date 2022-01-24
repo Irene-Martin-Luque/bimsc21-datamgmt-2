@@ -3,11 +3,16 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124.0/build/three.m
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.124.0/examples/jsm/controls/OrbitControls.js'
 import { Rhino3dmLoader } from 'https://cdn.jsdelivr.net/npm/three@0.124.0/examples/jsm/loaders/3DMLoader.js'
 
+
 let camera, scene, raycaster, renderer
 const mouse = new THREE.Vector2()
 window.addEventListener( 'click', onClick, false);
 
 init()
+animate()
+
+// hide spinner
+document.getElementById('loader').remove()
 animate()
 
 function init() {
@@ -18,7 +23,7 @@ function init() {
     scene = new THREE.Scene()
     scene.background = new THREE.Color(1,1,1)
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
-    camera.position.y = - 100
+    camera.position.y = - 150
 
     // create the renderer and add it to the html
     renderer = new THREE.WebGLRenderer( { antialias: true } )
@@ -35,14 +40,30 @@ function init() {
 
     raycaster = new THREE.Raycaster()
 
+    const material = new THREE.MeshNormalMaterial()
+
     const loader = new Rhino3dmLoader()
     loader.setLibraryPath( 'https://cdn.jsdelivr.net/npm/rhino3dm@0.13.0/' )
 
-    loader.load( 'sphere.3dm', function ( object ) {
+    loader.load( 'Differential Growth_Mesh Division.3dm', function ( object ) {
 
-        document.getElementById('loader').remove()
+       //////////////////////////////////////////////
+        // apply material to meshes
+
+        object.traverse( function (child) { 
+            if (child.isMesh) {
+                child.material = material
+
+                child.rotateX(-0.5 * Math.PI)
+            }
+        }, false)
+
+        //////////////////////////////////////////////
+
         scene.add( object )
-        console.log( object )
+
+        // hide spinner when model loads
+        // document.getElementById('loader').remove()
 
     } )
 
@@ -117,7 +138,12 @@ function onClick( event ) {
 function animate() {
 
     requestAnimationFrame( animate )
+   
+    object.rotation.x += 0.01;
+	object.rotation.y += 0.01;
+   
     renderer.render( scene, camera )
 
 }
 
+animate()
